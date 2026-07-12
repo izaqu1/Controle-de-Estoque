@@ -80,7 +80,35 @@ while True:
             print("Estoque Mínimo:", p[3])
 
     elif opcao == "Excluir Produto":
-        print("Função ainda não implementada.")
+        produtos = banco.listar()
+
+        if not produtos:
+            print("Não há produtos cadastrados.")
+            continue
+
+        excluir = questionary.select(
+        "Selecione o produto a ser excluído:",
+            choices=[
+                questionary.Choice(
+                    title=f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[2]} - Estoque Mínimo: {p[3]}",
+                        
+                    value=p[0]
+            )
+            for p in produtos
+            ]
+        ).ask()
+
+        if excluir:
+            confirmar = questionary.select(
+                "Tem certeza que deseja excluir este produto?",
+            choices=["Sim", "Não"]
+            ).ask()
+
+            if confirmar == "Sim":
+                banco.excluir(excluir)
+                print(" Produto excluído com sucesso!")
+            else:
+                print(" Exclusão cancelada.")
 
     elif opcao == "Sair":
         print("Saindo do sistema...")

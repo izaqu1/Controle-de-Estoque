@@ -76,3 +76,16 @@ def consultar_nome(nome):
     conexao.close()
 
     return produtos
+
+def excluir(id_produto):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "DELETE FROM produtos WHERE id = ?",
+        (id_produto,)
+    )
+
+    conexao.commit()
+    conexao.close()
