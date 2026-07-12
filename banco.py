@@ -12,23 +12,23 @@ def criar_tabela():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS produtos(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT UNIQUE,
-        quantidade INTEGER,
-        preco REAL
+        nome TEXT NOT NULL,
+        quantidade INTEGER NOT NULL,
+        estoque_minimo INTEGER NOT NULL
     )
     """)
 
     conexao.commit()
     conexao.close()
 
-def cadastrar(nome, quantidade, preco):
+def cadastrar(nome, quantidade, estoque_minimo):
 
     conexao = conectar()
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO produtos(nome, quantidade, preco) VALUES(?,?,?)",
-        (nome, quantidade, preco)
+        "INSERT INTO produtos(nome, quantidade, estoque_minimo) VALUES(?,?,?)",
+        (nome, quantidade, estoque_minimo)
     )
 
     conexao.commit()
