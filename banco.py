@@ -1,5 +1,3 @@
-banco.py
-
 import sqlite3
 
 def conectar():
@@ -40,6 +38,38 @@ def listar():
     cursor = conexao.cursor()
 
     cursor.execute("SELECT * FROM produtos")
+
+    produtos = cursor.fetchall()
+
+    conexao.close()
+
+    return produtos
+
+def consultar_id(id_produto):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "SELECT * FROM produtos WHERE id = ?",
+        (id_produto,)
+    )
+
+    produto = cursor.fetchone()
+
+    conexao.close()
+
+    return produto
+
+def consultar_nome(nome):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "SELECT * FROM produtos WHERE LOWER(nome) = LOWER(?)",
+        (nome,)
+    )
 
     produtos = cursor.fetchall()
 
