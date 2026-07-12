@@ -11,7 +11,6 @@ while True:
             "Cadastrar Produto",
             "Consultar Produto",
             "Adicionar Estoque",
-            
             "Retirar Estoque",
             "Listar Produtos",
             "Excluir Produto",
@@ -29,12 +28,12 @@ while True:
 
     elif opcao == "Consultar Produto":
 
-        tipo = questionary.select(
+        consultar_por = questionary.select(
         "Consultar por:",
         choices=["ID", "Nome"]
         ).ask()
 
-        if tipo == "ID":
+        if consultar_por == "ID":
             id_produto = int(input("Digite o ID: "))
 
             produto = banco.consultar_id(id_produto)
@@ -48,7 +47,7 @@ while True:
             else:
                 print("Produto não encontrado!")
 
-        elif tipo == "Nome":
+        elif consultar_por == "Nome":
             nome = input("Digite o nome do produto: ")
 
             produtos = banco.consultar_nome(nome)
@@ -80,7 +79,6 @@ while True:
             print("Estoque Mínimo:", p[3])
 
     elif opcao == "Excluir Produto":
-        print("Função ainda não implementada.")
 
     elif opcao == "Sair":
         print("Saindo do sistema...")
