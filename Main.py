@@ -45,8 +45,9 @@ while True:
                 print("-----------------------")
                 print("ID:", produto[0])
                 print("Nome:", produto[1])
-                print("Quantidade:", produto[2])
-                print("Estoque Mínimo:", produto[3])
+                print("Categoria:", produto[2])
+                print("Quantidade:", produto[3])
+                print("Estoque Mínimo:", produto[4])
             else:
                 print("Produto não encontrado!")
 
@@ -60,35 +61,36 @@ while True:
                     print("-----------------------")
                     print("ID:", p[0])
                     print("Nome:", p[1])
-                    print("Quantidade:", p[2])
-                    print("Estoque Mínimo:", p[3])
+                    print("Categoria:", p[2])
+                    print("Quantidade:", p[3])
+                    print("Estoque Mínimo:", p[4])
             else:
                 print("Nenhum produto encontrado.")
     
     elif opcao == "Consultar Categoria":
 
-    categorias = banco.listar_categorias()
+        categorias = banco.listar_categorias()
 
-    if not categorias:
-        print("Nenhuma categoria cadastrada.")
-        continue
+        if not categorias:
+            print("Nenhuma categoria cadastrada.")
+            continue
 
-    categoria = questionary.select(
-        "Selecione uma categoria:",
-        choices=[c[0] for c in categorias]
-    ).ask()
+        categoria = questionary.select(
+            "Selecione uma categoria:",
+            choices=[c[0] for c in categorias]
+        ).ask()
 
-    produtos = banco.consultar_categoria(categoria)
+        produtos = banco.consultar_categoria(categoria)
 
-    print(f"\nCategoria: {categoria}")
+        print(f"\nCategoria: {categoria}")
 
-    for p in produtos:
-        print("-----------------------")
-        print("ID:", p[0])
-        print("Nome:", p[1])
-        print("Categoria:", p[2])
-        print("Quantidade:", p[3])
-        print("Estoque Mínimo:", p[4])
+        for p in produtos:
+            print("-----------------------")
+            print("ID:", p[0])
+            print("Nome:", p[1])
+            print("Categoria:", p[2])
+            print("Quantidade:", p[3])
+            print("Estoque Mínimo:", p[4])
 
     elif opcao == "Atualizar Produto":
         print("Função ainda não implementada.")
@@ -106,8 +108,9 @@ while True:
             print("-----------------------")
             print("ID:", p[0])
             print("Nome:", p[1])
-            print("Quantidade:", p[2])
-            print("Estoque Mínimo:", p[3])
+            print("Categoria:", p[2])
+            print("Quantidade:", p[3])
+            print("Estoque Mínimo:", p[4])
 
     elif opcao == "Excluir Produto":
         produtos = banco.listar()
@@ -120,8 +123,7 @@ while True:
         "Selecione o produto a ser excluído:",
             choices=[
                 questionary.Choice(
-                    title=f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[2]} - Estoque Mínimo: {p[3]}",
-                        
+                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}",
                     value=p[0]
             )
             for p in produtos
