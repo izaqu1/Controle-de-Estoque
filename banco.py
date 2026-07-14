@@ -11,6 +11,7 @@ def criar_tabela():
     CREATE TABLE IF NOT EXISTS produtos(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
+        categoria TEXT NOT NULL,
         quantidade INTEGER NOT NULL,
         estoque_minimo INTEGER NOT NULL
     )
@@ -19,14 +20,14 @@ def criar_tabela():
     conexao.commit()
     conexao.close()
 
-def cadastrar(nome, quantidade, estoque_minimo):
+def cadastrar(nome, categoria, quantidade, estoque_minimo):
 
     conexao = conectar()
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO produtos(nome, quantidade, estoque_minimo) VALUES(?,?,?)",
-        (nome, quantidade, estoque_minimo)
+        "INSERT INTO produtos(nome, categoria, quantidade, estoque_minimo) VALUES(?,?,?,?,?)",
+        (nome, categoria, quantidade, estoque_minimo)
     )
 
     conexao.commit()
@@ -89,3 +90,36 @@ def excluir(id_produto):
 
     conexao.commit()
     conexao.close()
+
+def listar_categorias():
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT DISTINCT categoria
+        FROM produtos
+        ORDER BY categoria
+    """)
+
+    categorias = cursor.fetchall()
+
+    conexao.close()
+
+    return categorias
+
+def consultar_categoria(categoria):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "SELECT * FROM produtos WHERE categoria = ?",
+        (categoria,)
+    )
+
+    produtos = cursor.fetchall()
+
+    conexao.close()
+
+    return produtos

@@ -10,6 +10,8 @@ while True:
         choices=[
             "Cadastrar Produto",
             "Consultar Produto",
+            "Consultar Categoria",
+            "Atualizar Produto",
             "Adicionar Estoque",
             "Retirar Estoque",
             "Listar Produtos",
@@ -19,11 +21,12 @@ while True:
     ).ask()
 
     if opcao == "Cadastrar Produto":
-        nome = input("Nome: ")
+        nome = input("Nome do produto: ")
+        categoria = input("Categoria do produto: ")
         quantidade = int(input("Quantidade: "))
         estoque_minimo = int(input("Estoque Mínimo: "))
 
-        banco.cadastrar(nome, quantidade, estoque_minimo)
+        banco.cadastrar(nome, categoria, quantidade, estoque_minimo)
         print("Produto cadastrado!")
 
     elif opcao == "Consultar Produto":
@@ -61,6 +64,34 @@ while True:
                     print("Estoque Mínimo:", p[3])
             else:
                 print("Nenhum produto encontrado.")
+    
+    elif opcao == "Consultar Categoria":
+
+    categorias = banco.listar_categorias()
+
+    if not categorias:
+        print("Nenhuma categoria cadastrada.")
+        continue
+
+    categoria = questionary.select(
+        "Selecione uma categoria:",
+        choices=[c[0] for c in categorias]
+    ).ask()
+
+    produtos = banco.consultar_categoria(categoria)
+
+    print(f"\nCategoria: {categoria}")
+
+    for p in produtos:
+        print("-----------------------")
+        print("ID:", p[0])
+        print("Nome:", p[1])
+        print("Categoria:", p[2])
+        print("Quantidade:", p[3])
+        print("Estoque Mínimo:", p[4])
+
+    elif opcao == "Atualizar Produto":
+        print("Função ainda não implementada.")
 
     elif opcao == "Adicionar Estoque":
         print("Função ainda não implementada.")
