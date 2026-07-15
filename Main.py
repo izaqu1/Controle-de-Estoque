@@ -19,14 +19,29 @@ while True:
 
  #--------------------------------------------------------------------------
     if opcao == "Cadastrar Produto":
+        cancelou = False
+
         while True:
-            nome = input("Nome do produto: ")
-            if nome:
-                nome = nome.strip()
+            nome = input("Nome do produto: ").strip()
+
+            if nome == "":
+                resposta = questionary.select(
+                     "Deseja cancelar o cadastro?",
+                     choices=["Sim", "Não"]
+                ).ask()
+
+                if resposta == "Sim":
+                    print("Cadastro cancelado.")
+                    cancelou = True
+                    break
+                else:
+                    continue
+
                 break
-            else:
-                print("Erro: não é permitido deixar campos em branco. Digite novamente.")
-                continue
+
+        if cancelou:
+            continue
+
         while True:
             categoria = input("Categoria: ").strip()
 
