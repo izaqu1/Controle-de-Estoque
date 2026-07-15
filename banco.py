@@ -13,21 +13,21 @@ def criar_tabela():
         nome TEXT NOT NULL,
         categoria TEXT NOT NULL,
         quantidade INTEGER NOT NULL,
-        estoque_minimo INTEGER NOT NULL
+        quantidade_minima INTEGER NOT NULL
     )
     """)
 
     conexao.commit()
     conexao.close()
 
-def cadastrar(nome, categoria, quantidade, estoque_minimo):
+def cadastrar(nome, categoria, quantidade, quantidade_minima):
 
     conexao = conectar()
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO produtos(nome, categoria, quantidade, estoque_minimo) VALUES(?,?,?,?)",
-        (nome, categoria, quantidade, estoque_minimo)
+        "INSERT INTO produtos(nome, categoria, quantidade, quantidade_minima) VALUES(?,?,?,?)",
+        (nome, categoria, quantidade, quantidade_minima)
     )
 
     conexao.commit()
@@ -114,7 +114,7 @@ def consultar_categoria(categoria):
     cursor = conexao.cursor()
 
     cursor.execute(
-        "SELECT * FROM produtos WHERE categoria = ?",
+        "SELECT * FROM produtos WHERE LOWER(categoria) = LOWER(?)",
         (categoria,)
     )
 
@@ -124,14 +124,14 @@ def consultar_categoria(categoria):
 
     return produtos
 
-def atualizar(id_produto, nome, categoria, quantidade, estoque_minimo):
+def atualizar(id_produto, nome, categoria, quantidade, quantidade_minima):
 
     conexao = conectar()
     cursor = conexao.cursor()
 
     cursor.execute(
-        "UPDATE produtos SET nome = ?, categoria = ?, quantidade = ?, estoque_minimo = ? WHERE id = ?",
-        (nome, categoria, quantidade, estoque_minimo, id_produto)
+        "UPDATE produtos SET nome = ?, categoria = ?, quantidade = ?, quantidade_minima = ? WHERE id = ?",
+        (nome, categoria, quantidade, quantidade_minima, id_produto)
     )
 
     conexao.commit()

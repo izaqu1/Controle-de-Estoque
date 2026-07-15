@@ -16,6 +16,8 @@ while True:
             "Sair"
         ]
     ).ask()
+
+ #--------------------------------------------------------------------------
     if opcao == "Cadastrar Produto":
         while True:
             nome = input("Nome do produto: ")
@@ -42,17 +44,18 @@ while True:
                 print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
 
         while True:
-            estoque_minimo = input("Estoque Mínimo: ")
+            quantidade_minima = input("quantidade Mínima: ")
 
-            if estoque_minimo.isdigit():
-                estoque_minimo = int(estoque_minimo)
+            if quantidade_minima.isdigit():
+                quantidade_minima = int(quantidade_minima)
                 break
             else:
                 print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
 
-        banco.cadastrar(nome, categoria, quantidade, estoque_minimo)
+        banco.cadastrar(nome, categoria, quantidade, quantidade_minima)
         print("Produto cadastrado!")
  
+ #--------------------------------------------------------------------------
     elif opcao == "Consultar Categoria":
 
         categorias = banco.listar_categorias()
@@ -71,14 +74,15 @@ while True:
         print(f"\nCategoria: {categoria}")
 
         for p in produtos:
-            print(f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[2]} - Estoque Mínimo: {p[3]}")
+            print(f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}")
 
+#--------------------------------------------------------------------------
     elif opcao == "Atualizar Produto":
         atualizar_produto = questionary.select(
             "Selecione o produto a ser atualizado:",
             choices=[
                 questionary.Choice(
-                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}",
+                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
                     value=p[0]
                 )
                 for p in banco.listar()
@@ -95,22 +99,15 @@ while True:
                 print("Nome:", produto[1])
                 print("Categoria:", produto[2])
                 print("Quantidade:", produto[3])
-                print("Estoque Mínimo:", produto[4])
-            while True:
+                print("Quantidade Mínima:", produto[4])
+
                 nome = input(f"Novo nome (atual: {produto[1]}): ") or produto[1]
-                if nome:
-                    nome = nome.strip()
-                    break
-                else:
-                    print("O nome do produto não pode ser vazio. Por favor, insira um nome válido.")
-                
             while True:
                 categoria = input(f"Nova categoria (atual: {produto[2]}): ") or produto[2]
-                if categoria:
-                    categoria = categoria.strip()
+                if categoria and not categoria[0].isdigit():
                     break
                 else:
-                    print("A categoria do produto não pode ser vazio. Por favor, insira uma categoria válida.")
+                    print("A categoria do produto não pode ser vazio nem começar com um numero. Por favor, insira uma categoria válida.")
 
             while True:
                 quantidade = input(f"Nova quantidade (atual: {produto[3]}): ")
@@ -124,24 +121,32 @@ while True:
                     quantidade = produto[3]
                     break
             while True:
-                estoque_minimo = input(f"Novo estoque mínimo (atual: {produto[4]}): ")
-                if not estoque_minimo:
-                    estoque_minimo = produto[4]
+                quantidade_minima = input(f"Nova quantidade mínima (atual: {produto[4]}): ")
+
+                if quantidade_minima == "":
+                    quantidade_minima = produto[4]
+                    break
+
+                elif quantidade_minima.isdigit():
+                    quantidade_minima = int(quantidade_minima)
+                    break
+
                 else:
-                    estoque_minimo = int(estoque_minimo)
-                break
+                    print("Digite apenas números.")
 
-                banco.atualizar(atualizar_produto, nome, categoria, quantidade, estoque_minimo)
-                print("Produto atualizado com sucesso!")
-            else:
-                print("Produto não encontrado.")
+            banco.atualizar(atualizar_produto, nome, categoria, quantidade, quantidade_minima)
+            print("Produto atualizado com sucesso!")
+        else:
+            print("Produto não encontrado.")
 
-
+#--------------------------------------------------------------------------
     elif opcao == "Listar Produtos":
         produtos = banco.listar()
 
         for p in produtos:
-           print(f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}")
+           print(f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}")
+
+#--------------------------------------------------------------------------
     elif opcao == "Excluir Produto":
         produtos = banco.listar()
 
@@ -153,7 +158,7 @@ while True:
         "Selecione o produto a ser excluído:",
             choices=[
                 questionary.Choice(
-                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}",
+                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
                     value=p[0]
             )
             for p in produtos
@@ -172,6 +177,8 @@ while True:
             else:
                 print(" Exclusão cancelada.")
 
+
+#--------------------------------------------------------------------------
     elif opcao == "Sair":
         print("Saindo do sistema...")
         break
