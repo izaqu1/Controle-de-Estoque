@@ -9,64 +9,50 @@ while True:
         "===== SISTEMA DE CONTROLE DE ESTOQUE =====",
         choices=[
             "Cadastrar Produto",
-            "Consultar Produto",
             "Consultar Categoria",
             "Atualizar Produto",
-            "Adicionar Estoque",
-            "Retirar Estoque",
             "Listar Produtos",
             "Excluir Produto",
             "Sair"
         ]
     ).ask()
-
     if opcao == "Cadastrar Produto":
-        nome = input("Nome do produto: ")
-        categoria = input("Categoria do produto: ")
-        quantidade = int(input("Quantidade: "))
-        estoque_minimo = int(input("Estoque Mínimo: "))
+        while True:
+            nome = input("Nome do produto: ")
+            if nome:
+                nome = nome.strip()
+                break
+            else:
+                print("Erro: não é permitido deixar campos em branco. Digite novamente.")
+                continue
+        while True:
+            categoria = input("Categoria: ").strip()
+
+            if categoria:
+                break
+            else:
+                print("Erro: não é permitido deixar campos em branco. Digite novamente.")
+        while True:
+            quantidade = input("Quantidade: ")
+
+            if quantidade.isdigit():
+                quantidade = int(quantidade)
+                break
+            else:
+                print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
+
+        while True:
+            estoque_minimo = input("Estoque Mínimo: ")
+
+            if estoque_minimo.isdigit():
+                estoque_minimo = int(estoque_minimo)
+                break
+            else:
+                print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
 
         banco.cadastrar(nome, categoria, quantidade, estoque_minimo)
         print("Produto cadastrado!")
-
-    elif opcao == "Consultar Produto":
-
-        consultar_por = questionary.select(
-        "Consultar por:",
-        choices=["ID", "Nome"]
-        ).ask()
-
-        if consultar_por == "ID":
-            id_produto = int(input("Digite o ID: "))
-
-            produto = banco.consultar_id(id_produto)
-
-            if produto:
-                print("-----------------------")
-                print("ID:", produto[0])
-                print("Nome:", produto[1])
-                print("Categoria:", produto[2])
-                print("Quantidade:", produto[3])
-                print("Estoque Mínimo:", produto[4])
-            else:
-                print("Produto não encontrado!")
-
-        elif consultar_por == "Nome":
-            nome = input("Digite o nome do produto: ")
-
-            produtos = banco.consultar_nome(nome)
-
-            if produtos:
-                for p in produtos:
-                    print("-----------------------")
-                    print("ID:", p[0])
-                    print("Nome:", p[1])
-                    print("Categoria:", p[2])
-                    print("Quantidade:", p[3])
-                    print("Estoque Mínimo:", p[4])
-            else:
-                print("Nenhum produto encontrado.")
-    
+ 
     elif opcao == "Consultar Categoria":
 
         categorias = banco.listar_categorias()
@@ -85,33 +71,16 @@ while True:
         print(f"\nCategoria: {categoria}")
 
         for p in produtos:
-            print("-----------------------")
-            print("ID:", p[0])
-            print("Nome:", p[1])
-            print("Categoria:", p[2])
-            print("Quantidade:", p[3])
-            print("Estoque Mínimo:", p[4])
+            print(f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[2]} - Estoque Mínimo: {p[3]}")
 
     elif opcao == "Atualizar Produto":
-        print("Função ainda não implementada.")
-
-    elif opcao == "Adicionar Estoque":
-        print("Função ainda não implementada.")
-
-    elif opcao == "Retirar Estoque":
         print("Função ainda não implementada.")
 
     elif opcao == "Listar Produtos":
         produtos = banco.listar()
 
         for p in produtos:
-            print("-----------------------")
-            print("ID:", p[0])
-            print("Nome:", p[1])
-            print("Categoria:", p[2])
-            print("Quantidade:", p[3])
-            print("Estoque Mínimo:", p[4])
-
+           print(f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}")
     elif opcao == "Excluir Produto":
         produtos = banco.listar()
 
