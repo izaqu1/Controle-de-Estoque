@@ -26,7 +26,7 @@ def cadastrar(nome, categoria, quantidade, estoque_minimo):
     cursor = conexao.cursor()
 
     cursor.execute(
-        "INSERT INTO produtos(nome, categoria, quantidade, estoque_minimo) VALUES(?,?,?,?,?)",
+        "INSERT INTO produtos(nome, categoria, quantidade, estoque_minimo) VALUES(?,?,?,?)",
         (nome, categoria, quantidade, estoque_minimo)
     )
 
