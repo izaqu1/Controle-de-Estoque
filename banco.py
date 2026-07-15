@@ -123,3 +123,16 @@ def consultar_categoria(categoria):
     conexao.close()
 
     return produtos
+
+def atualizar(id_produto, nome, categoria, quantidade, estoque_minimo):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "UPDATE produtos SET nome = ?, categoria = ?, quantidade = ?, estoque_minimo = ? WHERE id = ?",
+        (nome, categoria, quantidade, estoque_minimo, id_produto)
+    )
+
+    conexao.commit()
+    conexao.close()

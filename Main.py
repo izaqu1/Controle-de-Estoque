@@ -9,11 +9,8 @@ while True:
         "===== SISTEMA DE CONTROLE DE ESTOQUE =====",
         choices=[
             "Cadastrar Produto",
-            "Consultar Produto",
             "Consultar Categoria",
             "Atualizar Produto",
-            "Adicionar Estoque",
-            "Retirar Estoque",
             "Listar Produtos",
             "Excluir Produto",
             "Sair"
@@ -93,7 +90,68 @@ while True:
             print("Estoque Mínimo:", p[4])
 
     elif opcao == "Atualizar Produto":
-        print("Função ainda não implementada.")
+        atualizar_produto = questionary.select(
+            "Selecione o produto a ser atualizado:",
+            choices=[
+                questionary.Choice(
+                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Estoque Mínimo: {p[4]}",
+                    value=p[0]
+                )
+                for p in banco.listar()
+            ]
+        ).ask()
+
+        if atualizar_produto:
+            produto = banco.consultar_id(atualizar_produto)
+
+            if produto:
+                print("Produto selecionado:")
+                print("-----------------------")
+                print("ID:", produto[0])
+                print("Nome:", produto[1])
+                print("Categoria:", produto[2])
+                print("Quantidade:", produto[3])
+                print("Estoque Mínimo:", produto[4])
+            while True:
+                nome = input(f"Novo nome (atual: {produto[1]}): ") or produto[1]
+                if nome:
+                    nome = nome.strip()
+                    break
+                else:
+                    print("O nome do produto não pode ser vazio. Por favor, insira um nome válido.")
+                
+            while True:
+                categoria = input(f"Nova categoria (atual: {produto[2]}): ") or produto[2]
+                if categoria:
+                    categoria = categoria.strip()
+                    break
+                else:
+                    print("A categoria do produto não pode ser vazio. Por favor, insira uma categoria válida.")
+
+            while True:
+                quantidade = input(f"Nova quantidade (atual: {produto[3]}): ")
+                if quantidade:
+                    try:
+                        quantidade = int(quantidade)
+                        break
+                    except ValueError:
+                        print("A quantidade do produto deve ser um número inteiro. Por favor, insira um valor válido.")
+                else:
+                    quantidade = produto[3]
+                    break
+            while True:
+                estoque_minimo = input(f"Novo estoque mínimo (atual: {produto[4]}): ")
+                if not estoque_minimo:
+                    estoque_minimo = produto[4]
+                else:
+                    estoque_minimo = int(estoque_minimo)
+                break
+
+                banco.atualizar(atualizar_produto, nome, categoria, quantidade, estoque_minimo)
+                print("Produto atualizado com sucesso!")
+            else:
+                print("Produto não encontrado.")
+
 
     elif opcao == "Adicionar Estoque":
         print("Função ainda não implementada.")
