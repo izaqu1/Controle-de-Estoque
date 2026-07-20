@@ -1,6 +1,6 @@
 import banco
+import ajuda
 import questionary
-
 banco.criar_tabela()
 
 while True:
@@ -9,9 +9,12 @@ while True:
         "===== SISTEMA DE CONTROLE DE ESTOQUE =====",
         choices=[
             "Cadastrar Produto",
+            "Entrada de Estoque",
+            "Saída de Estoque",
             "Consultar Categoria",
             "Atualizar Produto",
-            "Listar Produtos",
+            "Relatório de Inventário",
+            "Relatório de Movimentações",
             "Excluir Produto",
             "Sair"
         ]
@@ -19,57 +22,98 @@ while True:
 
  #--------------------------------------------------------------------------
     if opcao == "Cadastrar Produto":
-        cancelou = False
+        nome = ajuda.ler_nome()
 
-        while True:
-            nome = input("Nome do produto: ").strip()
-
-            if nome == "":
-                resposta = questionary.select(
-                     "Deseja cancelar o cadastro?",
-                     choices=["Sim", "Não"]
-                ).ask()
-
-                if resposta == "Sim":
-                    print("Cadastro cancelado.")
-                    cancelou = True
-                    break
-                else:
-                    continue
-
-            break
-
-        if cancelou:
+        if nome is None:
             continue
-        
-        while True:
-            categoria = input("Categoria: ").strip()
 
-            if categoria and not categoria[0].isdigit():
-                break
-
-            print("A categoria não pode ficar vazia nem começar com número.")
-
-        while True:
-            quantidade = input("Quantidade: ")
-
-            if quantidade.isdigit():
-                quantidade = int(quantidade)
-                break
-            else:
-                print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
-        
-        while True:
-            quantidade_minima = input("quantidade Mínima: ")
-
-            if quantidade_minima.isdigit():
-                quantidade_minima = int(quantidade_minima)
-                break
-            else:
-                print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
+        categoria = ajuda.ler_categoria()
+        quantidade = ajuda.ler_quantidade()
+        quantidade_minima = ajuda.ler_quantidade_minima()
 
         banco.cadastrar(nome, categoria, quantidade, quantidade_minima)
-        print("Produto cadastrado!")
+        print("Produto cadastrado com sucesso!")
+
+ #--------------------------------------------------------------------------
+    elif opcao == "Entrada de Estoque":
+        produtos = banco.listar()
+
+        if not produtos:
+            print("Não há produtos cadastrados.")
+            continue
+
+        ajuda.mostrar_produtos(produtos)
+
+        choices = [
+            questionary.Choice(
+                title=f"ID: {p[0]} | {p[1]} | Categoria: {p[2]} | Estoque: {p[3]}",
+                value=p[0]
+            )
+            for p in produtos
+        ]
+
+        choices.append(questionary.Choice(
+            title="Cancelar",
+            value="entrada-estoque"
+        ))
+
+        id_produto = questionary.select(
+            "Selecione o produto para entrada de estoque:",
+            choices=choices
+            ).ask()
+
+        if id_produto is "entrada-estoque":
+            print("Entrada de estoque cancelada.")
+            continue
+
+        quantidade = ajuda.ler_quantidade()
+
+        banco.entrada_estoque(id_produto, quantidade)
+
+        print("Entrada de estoque registrada com sucesso!")
+
+ #--------------------------------------------------------------------------
+    elif opcao == "Saída de Estoque":
+        produtos = banco.listar()
+
+        if not produtos:
+            print("Não há produtos cadastrados.")
+            continue
+
+        ajuda.mostrar_produtos(produtos)
+
+        choices = [
+            questionary.Choice(
+                title=f"ID: {p[0]} | {p[1]} | Categoria: {p[2]} | Estoque: {p[3]}",
+                value=p[0]
+            )
+            for p in produtos
+        ]
+
+        choices.append(
+            questionary.Choice(
+                title="Cancelar",
+                value='saida-estoque'
+            )
+        )
+
+        id_produto = questionary.select(
+            "Selecione o produto para saída de estoque:",
+            choices=choices
+        ).ask()
+
+        if id_produto is 'saida-estoque':
+            print("Saída de estoque cancelada.")
+            continue
+
+        quantidade = ajuda.ler_quantidade()
+
+        sucesso = banco.saida_estoque(id_produto, quantidade)
+
+        if sucesso:
+            print("Saída de estoque registrada com sucesso!")
+        else:
+            print("Erro: Quantidade insuficiente em estoque ou produto não encontrado.")
  
  #--------------------------------------------------------------------------
     elif opcao == "Consultar Categoria":
@@ -89,99 +133,86 @@ while True:
 
         print(f"\nCategoria: {categoria}")
 
-        for p in produtos:
-            print(f"ID: {p[0]} - Nome: {p[1]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}")
-
+        ajuda.mostrar_produtos(produtos)
+        
 #--------------------------------------------------------------------------
     elif opcao == "Atualizar Produto":
+        produtos = banco.listar()
+
+        if not produtos:
+            print("Não há produtos cadastrados.")
+            continue
+
+        choices = [
+        questionary.Choice(
+            title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
+            value=p[0]
+        )
+        for p in produtos
+    ]
+
+        choices.append(questionary.Choice(title="Cancelar", value=None))
+
         atualizar_produto = questionary.select(
             "Selecione o produto a ser atualizado:",
-            choices=[
-                questionary.Choice(
-                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
-                    value=p[0]
-                )
-                for p in banco.listar()
-            ]
+            choices=choices
         ).ask()
 
-        if atualizar_produto:
-            produto = banco.consultar_id(atualizar_produto)
+        if atualizar_produto is None:
+                print("Atualização cancelada.")
+                continue
 
-            if produto:
-                print("Produto selecionado:")
-                print("-----------------------")
-                print("ID:", produto[0])
-                print("Nome:", produto[1])
-                print("Categoria:", produto[2])
-                print("Quantidade:", produto[3])
-                print("Quantidade Mínima:", produto[4])
+        produto = banco.consultar_id(atualizar_produto)
 
-            while True:
-                nome = input(f"Novo nome (atual: {produto[1]}): ")
+        if produto:
+            print("Produto selecionado:")
+            print("-----------------------")
+            ajuda.mostrar_produtos([produto])
 
-                if nome == "":
-                    nome = produto[1]
-                    break
+            nome = ajuda.atualizar_nome(produto[1])
+            categoria = ajuda.atualizar_categoria(produto[2])
+            quantidade = ajuda.atualizar_quantidade(produto[3])
+            quantidade_minima = ajuda.atualizar_quantidade_minima(produto[4])
 
-                nome = nome.strip()
+            confirmar = questionary.select(
+                "Confirma a atualização deste produto?",
+                choices=["Sim", "Não"]
+            ).ask()
 
-                if nome:
-                    break
+            if confirmar == "Sim":
+                banco.atualizar(
+                    atualizar_produto,
+                    nome,
+                    categoria,
+                    quantidade,
+                    quantidade_minima
+                )
+                print("Produto atualizado com sucesso!")
+            else:
+                print("Atualização cancelada.")
 
-                print("O nome não pode ficar vazio.")
-
-
-            while True:
-                categoria = input(f"Nova categoria (atual: {produto[2]}): ")
-
-                if categoria == "":
-                    categoria = produto[2]
-                    break
-
-                categoria = categoria.strip()
-
-                if categoria and not categoria[0].isdigit():
-                    break
-
-                print("A categoria não pode ficar vazia nem começar com número.")
-
-            while True:
-                quantidade = input(f"Nova quantidade (atual: {produto[3]}): ")
-                if quantidade:
-                    try:
-                        quantidade = int(quantidade)
-                        break
-                    except ValueError:
-                        print("A quantidade do produto deve ser um número inteiro. Por favor, insira um valor válido.")
-                else:
-                    quantidade = produto[3]
-                    break
-            while True:
-                quantidade_minima = input(f"Nova quantidade mínima (atual: {produto[4]}): ")
-
-                if quantidade_minima == "":
-                    quantidade_minima = produto[4]
-                    break
-
-                elif quantidade_minima.isdigit():
-                    quantidade_minima = int(quantidade_minima)
-                    break
-
-                else:
-                    print("Digite apenas números.")
-
-            banco.atualizar(atualizar_produto, nome, categoria, quantidade, quantidade_minima)
-            print("Produto atualizado com sucesso!")
         else:
             print("Produto não encontrado.")
 
 #--------------------------------------------------------------------------
-    elif opcao == "Listar Produtos":
+    elif opcao == "Relatório de Inventário":
         produtos = banco.listar()
 
-        for p in produtos:
-           print(f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}")
+        if not produtos:
+            print("Não há produtos cadastrados.")
+            continue
+
+        ajuda.mostrar_produtos(produtos)
+
+#--------------------------------------------------------------------------
+    elif opcao == "Relatório de Movimentações":
+        movimentacoes = banco.listar_movimentacoes()
+
+        if not movimentacoes:
+            print("Não há movimentações registradas.")
+            continue
+
+        ajuda.mostrar_movimentacoes(movimentacoes)
 
 #--------------------------------------------------------------------------
     elif opcao == "Excluir Produto":
@@ -191,30 +222,37 @@ while True:
             print("Não há produtos cadastrados.")
             continue
 
-        excluir = questionary.select(
-        "Selecione o produto a ser excluído:",
-            choices=[
-                questionary.Choice(
-                    title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
-                    value=p[0]
+        ajuda.mostrar_produtos(produtos)
+
+        choices = [
+            questionary.Choice(
+                title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
+                value=p[0]
             )
             for p in produtos
-            ]
+        ]
+
+        choices.append(questionary.Choice(title="Cancelar", value=None))
+
+        excluir = questionary.select(
+            "Selecione o produto a ser excluído:",
+            choices=choices
         ).ask()
 
-        if excluir:
-            confirmar = questionary.select(
-                "Tem certeza que deseja excluir este produto?",
+        if excluir is None:
+            print("Exclusão cancelada.")
+            continue
+
+        confirmar = questionary.select(
+            "Tem certeza que deseja excluir este produto?",
             choices=["Sim", "Não"]
-            ).ask()
+        ).ask()
 
-            if confirmar == "Sim":
-                banco.excluir(excluir)
-                print(" Produto excluído com sucesso!")
-            else:
-                print(" Exclusão cancelada.")
-
-
+        if confirmar == "Sim":
+            banco.excluir(excluir)
+            print("Produto excluído com sucesso!")
+        else:
+            print("Exclusão cancelada.")
 #--------------------------------------------------------------------------
     elif opcao == "Sair":
         print("Saindo do sistema...")

@@ -17,6 +17,17 @@ def criar_tabela():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS movimentacoes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_produto INTEGER NOT NULL,
+        tipo TEXT NOT NULL,
+        quantidade INTEGER NOT NULL,
+        data DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(id_produto) REFERENCES produtos(id)
+)
+""")
+
     conexao.commit()
     conexao.close()
 
@@ -136,3 +147,82 @@ def atualizar(id_produto, nome, categoria, quantidade, quantidade_minima):
 
     conexao.commit()
     conexao.close()
+
+def registrar_movimentacao(id_produto, tipo, quantidade):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "INSERT INTO movimentacoes(id_produto, tipo, quantidade) VALUES(?,?,?)",
+        (id_produto, tipo, quantidade)
+    )
+
+    conexao.commit()
+    conexao.close()
+
+def listar_movimentacoes():
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT
+            m.id,
+            p.nome,
+            m.tipo,
+            m.quantidade,
+            m.data
+        FROM movimentacoes m
+        JOIN produtos p
+            ON p.id = m.id_produto
+        ORDER BY m.data DESC
+    """)
+
+    movimentacoes = cursor.fetchall()
+
+    conexao.close()
+
+    return movimentacoes
+
+def entrada_estoque(id_produto, quantidade):
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        UPDATE produtos
+        SET quantidade = quantidade + ?
+        WHERE id = ?
+    """, (quantidade, id_produto))
+
+    conexao.commit()
+    conexao.close()
+
+    registrar_movimentacao(id_produto, "Entrada", quantidade)
+
+def saida_estoque(id_produto, quantidade):
+
+    produto = consultar_id(id_produto)
+
+    if produto is None:
+        return False
+
+    if quantidade > produto[3]:
+        return False
+
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        UPDATE produtos
+        SET quantidade = quantidade - ?
+        WHERE id = ?
+    """, (quantidade, id_produto))
+
+    conexao.commit()
+    conexao.close()
+
+    registrar_movimentacao(id_produto, "Saída", quantidade)
+
+    return True
