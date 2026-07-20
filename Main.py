@@ -206,10 +206,10 @@ while True:
                 if produto[3] <= produto[4]:
                     print(f"ATENÇÃO! O produto '{produto[1]}' atingiu o estoque mínimo.")
             else:
-                print("Atualização cancelada.")
+                print("Atualização cancelada!")
 
         else:
-            print("Produto não encontrado.")
+            print("Produto não encontrado!")
 
 #--------------------------------------------------------------------------
     elif opcao == "Relatório de Inventário":
