@@ -37,18 +37,19 @@ while True:
                 else:
                     continue
 
-                break
+            break
 
         if cancelou:
             continue
-
+        
         while True:
             categoria = input("Categoria: ").strip()
 
-            if categoria:
+            if categoria and not categoria[0].isdigit():
                 break
-            else:
-                print("Erro: não é permitido deixar campos em branco. Digite novamente.")
+
+            print("A categoria não pode ficar vazia nem começar com número.")
+
         while True:
             quantidade = input("Quantidade: ")
 
@@ -57,7 +58,7 @@ while True:
                 break
             else:
                 print("Erro: não é permitido utilizar letras ou caracteres especiais. Digite apenas números inteiros.")
-
+        
         while True:
             quantidade_minima = input("quantidade Mínima: ")
 
@@ -116,13 +117,34 @@ while True:
                 print("Quantidade:", produto[3])
                 print("Quantidade Mínima:", produto[4])
 
-                nome = input(f"Novo nome (atual: {produto[1]}): ") or produto[1]
             while True:
-                categoria = input(f"Nova categoria (atual: {produto[2]}): ") or produto[2]
+                nome = input(f"Novo nome (atual: {produto[1]}): ")
+
+                if nome == "":
+                    nome = produto[1]
+                    break
+
+                nome = nome.strip()
+
+                if nome:
+                    break
+
+                print("O nome não pode ficar vazio.")
+
+
+            while True:
+                categoria = input(f"Nova categoria (atual: {produto[2]}): ")
+
+                if categoria == "":
+                    categoria = produto[2]
+                    break
+
+                categoria = categoria.strip()
+
                 if categoria and not categoria[0].isdigit():
                     break
-                else:
-                    print("A categoria do produto não pode ser vazio nem começar com um numero. Por favor, insira uma categoria válida.")
+
+                print("A categoria não pode ficar vazia nem começar com número.")
 
             while True:
                 quantidade = input(f"Nova quantidade (atual: {produto[3]}): ")
