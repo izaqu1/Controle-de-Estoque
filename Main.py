@@ -46,7 +46,7 @@ while True:
 
         choices = [
             questionary.Choice(
-                title=f"ID: {p[0]} | {p[1]} | Categoria: {p[2]} | Estoque: {p[3]}",
+                title=f"ID: {p[0]} | {p[1]} | {p[2]} | {p[3]}",
                 value=p[0]
             )
             for p in produtos
@@ -84,7 +84,7 @@ while True:
 
         choices = [
             questionary.Choice(
-                title=f"ID: {p[0]} | {p[1]} | Categoria: {p[2]} | Estoque: {p[3]}",
+                title=f"ID: {p[0]} | {p[1]} | {p[2]} | {p[3]}",
                 value=p[0]
             )
             for p in produtos
@@ -143,24 +143,26 @@ while True:
             print("Não há produtos cadastrados.")
             continue
 
+        ajuda.mostrar_produtos(produtos)
+
         choices = [
         questionary.Choice(
-            title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
+            title=f"ID: {p[0]} - {p[1]} - {p[2]} - {p[3]} - {p[4]}",
             value=p[0]
         )
         for p in produtos
     ]
 
-        choices.append(questionary.Choice(title="Cancelar", value=None))
+        choices.append(questionary.Choice(title="Cancelar", value="atualizar"))
 
         atualizar_produto = questionary.select(
             "Selecione o produto a ser atualizado:",
             choices=choices
         ).ask()
 
-        if atualizar_produto is None:
-                print("Atualização cancelada.")
-                continue
+        if atualizar_produto is "atualizar":
+            print("Atualização cancelada.")
+            continue
 
         produto = banco.consultar_id(atualizar_produto)
 
@@ -226,20 +228,20 @@ while True:
 
         choices = [
             questionary.Choice(
-                title=f"ID: {p[0]} - Nome: {p[1]} - Categoria: {p[2]} - Quantidade: {p[3]} - Quantidade Mínima: {p[4]}",
+                title=f"ID: {p[0]} - {p[1]} - {p[2]} - {p[3]} - {p[4]}",
                 value=p[0]
             )
             for p in produtos
         ]
 
-        choices.append(questionary.Choice(title="Cancelar", value=None))
+        choices.append(questionary.Choice(title="Cancelar", value="excluir"))
 
         excluir = questionary.select(
             "Selecione o produto a ser excluído:",
             choices=choices
         ).ask()
 
-        if excluir is None:
+        if excluir is "excluir":
             print("Exclusão cancelada.")
             continue
 
