@@ -54,7 +54,7 @@ while True:
 
         choices.append(questionary.Choice(
             title="Cancelar",
-            value="entrada-estoque"
+            value="Cancelar"
         ))
 
         id_produto = questionary.select(
@@ -62,7 +62,7 @@ while True:
             choices=choices
             ).ask()
 
-        if id_produto is "entrada-estoque":
+        if id_produto is "Cancelar":
             print("Entrada de estoque cancelada.")
             continue
 
@@ -93,7 +93,7 @@ while True:
         choices.append(
             questionary.Choice(
                 title="Cancelar",
-                value='saida-estoque'
+                value='Cancelar'
             )
         )
 
@@ -102,7 +102,7 @@ while True:
             choices=choices
         ).ask()
 
-        if id_produto is 'saida-estoque':
+        if id_produto is 'Cancelar':
             print("Saída de estoque cancelada.")
             continue
 
@@ -112,9 +112,15 @@ while True:
 
         if sucesso:
             print("Saída de estoque registrada com sucesso!")
+
+            produto = banco.consultar_id(id_produto)
+
+            if produto[3] <= produto[4]:
+                print(f"ATENÇÃO! O produto '{produto[1]}' atingiu o estoque mínimo.")
+
         else:
             print("Erro: Quantidade insuficiente em estoque ou produto não encontrado.")
- 
+        
  #--------------------------------------------------------------------------
     elif opcao == "Consultar Categoria":
 
@@ -153,14 +159,14 @@ while True:
         for p in produtos
     ]
 
-        choices.append(questionary.Choice(title="Cancelar", value="atualizar"))
+        choices.append(questionary.Choice(title="Cancelar", value="Cancelar"))
 
         atualizar_produto = questionary.select(
             "Selecione o produto a ser atualizado:",
             choices=choices
         ).ask()
 
-        if atualizar_produto is "atualizar":
+        if atualizar_produto is "Cancelar":
             print("Atualização cancelada.")
             continue
 
@@ -190,6 +196,15 @@ while True:
                     quantidade_minima
                 )
                 print("Produto atualizado com sucesso!")
+            sucesso = banco.saida_estoque(id_produto, quantidade)
+
+            if sucesso:
+                print("Saída de estoque registrada com sucesso!")
+
+                produto = banco.consultar_id(id_produto)
+
+                if produto[3] <= produto[4]:
+                    print(f"ATENÇÃO! O produto '{produto[1]}' atingiu o estoque mínimo.")
             else:
                 print("Atualização cancelada.")
 
@@ -216,6 +231,7 @@ while True:
 
         ajuda.mostrar_movimentacoes(movimentacoes)
 
+
 #--------------------------------------------------------------------------
     elif opcao == "Excluir Produto":
         produtos = banco.listar()
@@ -234,14 +250,14 @@ while True:
             for p in produtos
         ]
 
-        choices.append(questionary.Choice(title="Cancelar", value="excluir"))
+        choices.append(questionary.Choice(title="Cancelar", value="Cancelar"))
 
         excluir = questionary.select(
             "Selecione o produto a ser excluído:",
             choices=choices
         ).ask()
 
-        if excluir is "excluir":
+        if excluir is "Cancelar":
             print("Exclusão cancelada.")
             continue
 
