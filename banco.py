@@ -1,7 +1,7 @@
 import sqlite3
 
 def conectar():
-    return sqlite3.connect("estoque.db")
+    return sqlite3.connect("banco.db")
 
 def criar_tabela():
     conexao = conectar()
