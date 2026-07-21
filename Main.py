@@ -3,6 +3,8 @@ import ajuda
 import questionary
 banco.criar_tabela()
 
+
+#Menu 
 while True:
 
     opcao = questionary.select(
